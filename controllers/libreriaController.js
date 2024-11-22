@@ -1,9 +1,8 @@
-const { Book } = require('../models');
+const { Books } = require('../models');
 const Joi = require('joi');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const books = require('../models/books');
 
 const bookSchema = Joi.object({
     name: Joi.string().required(),
@@ -31,7 +30,7 @@ module.exports = {
             const books = await Books.findAll();
             return res.status(200).send({ message: 'Books retrieved successfully', data: books });
         } catch (err) {
-            return res.status(500).send({ errors: 'Error retrieving books' });
+            return res.status(500).send({ errors: 'Error retrieving books' + err });
         }
     },
 
@@ -112,6 +111,18 @@ module.exports = {
             const book = await Books.findOne({ where: { id } });
             if (!book) {
                 return res.status(404).send({ errors: 'Book not found' });
+            }
+
+            try {
+                if (book.image) {
+                    const oldImagePath = path.join(__dirname, '../public/images', book.image);
+                    if (fs.existsSync(oldImagePath)) {
+                        fs.unlinkSync(oldImagePath);
+                        console.log('Imagen eliminada:', oldImagePath);
+                    }
+                }
+            } catch (err) {
+                console.error('Error al eliminar la imagen:', err);
             }
 
             await book.destroy();

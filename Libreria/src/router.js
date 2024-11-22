@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AddBook from "@/components/AddBook.vue";
-import BooksGrid from "@/components/BooksGrid.vue";
+import BooksGrid from "@/components/libreriaGrid.vue";
 
 const routes = [
   { path: "/books", name: "BooksGrid", component: BooksGrid },
